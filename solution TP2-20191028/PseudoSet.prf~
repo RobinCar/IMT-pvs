@@ -1,0 +1,32 @@
+(PseudoSet
+ (th1 0
+  (th1-1 nil 3781261790
+   (""
+    (auto-rewrite-theory-with-importings "PseudoSet" :always? true
+     :importchain? true)
+    (("" (induct "l")
+      (("1" (grind) nil nil)
+       ("2" (skosimp)
+        (("2" (do-rewrite)
+          (("2" (grind)
+            (("2" (case "isIn(cons1_var!1, cons2_var!1)")
+              (("1" (postpone) nil nil) ("2" (postpone) nil nil)) nil))
+            nil))
+          nil))
+        nil))
+      nil))
+    nil)
+   nil shostak))
+ (th2 0
+  (th2-1 nil 3781261392
+   (""
+    (auto-rewrite-theory-with-importings "PseudoSet" :always? true
+     :importchain? true)
+    (("" (induct "l")
+      (("1" (skosimp) (("1" (grind) (("1" (postpone) nil nil)) nil))
+        nil)
+       ("2" (postpone) nil nil))
+      nil))
+    nil)
+   nil shostak)))
+

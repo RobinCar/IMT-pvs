@@ -1,0 +1,9 @@
+Entier : DATATYPE
+BEGIN
+
+%%% basic constante
+zero : zero?
+%%% successor function
+plus1 (pred:Entier) : notzero?
+
+END Entier

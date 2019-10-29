@@ -1,0 +1,29 @@
+IndexTheory : THEORY
+ BEGIN
+
+	IMPORTING Index %%% on importe le data type 
+	i, i1 : VAR Index
+ 	p, p1 : VAR nat
+	m, m1 : VAR string
+
+	empty : [Index -> bool]
+	empty_make : AXIOM empty(make) = true
+	empty_add : AXIOM empty(add(i, m, p)) = false
+
+	size : [Index -> nat]
+	size_make : AXIOM size(make) = 0
+	sier_add : AXIOM size(add(i, m, p)) = 1 + size(l)
+
+	isIn : [string, Index -> bool]
+	isIn_make : AXIOM isIn(m, make) = false
+	isIn_add : AXIOM isIn(m1, add(i, m, p)) = ((m1 = m) or isIn(m1, i))
+
+	onPage : [nat, Index -> list[string]]
+	onPage_make : AXIOM onPage(p, make) = nil
+	onPage_add_yes : AXIOM (p1 = p) IMPLIES onPage(p1, add(i, m, p)) = cons(m, onPage(p1, i))
+	onPage_add_no : AXIOM (p1 /= p) IMPLIES onPage(p1, add(i, m, p)) = onPage(p1, i)
+
+	
+
+
+  END IndexTheory

@@ -1,0 +1,179 @@
+(adder
+ (FA_corr2 0
+  (FA_corr2-1 nil 3716725829 ("" (grind) nil nil)
+   ((nnint_plus_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (nnint_plus_posint_is_posint application-judgement "posint"
+     integers nil)
+    (nnint_times_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (even_plus_even_is_even application-judgement "even_int" integers
+     nil)
+    (odd_plus_odd_is_even application-judgement "even_int" integers
+     nil)
+    (even_plus_odd_is_odd application-judgement "odd_int" integers nil)
+    (mult_divides2 application-judgement "(divides(m))" divides nil)
+    (mult_divides1 application-judgement "(divides(n))" divides nil)
+    (even_times_int_is_even application-judgement "even_int" integers
+     nil)
+    (posint_times_posint_is_posint application-judgement "posint"
+     integers nil)
+    (odd_plus_even_is_odd application-judgement "odd_int" integers nil)
+    (posint_plus_nnint_is_posint application-judgement "posint"
+     integers nil)
+    (/= const-decl "boolean" notequal nil)
+    (XOR const-decl "bool" xor_def nil)
+    (FAsum const-decl "bool" adder nil)
+    (bool2nat const-decl "nat" adder nil)
+    (FAcarry const-decl "bool" adder nil))
+   shostak))
+ (FA_corr1 0
+  (yes "jhkdfhjds" 3629790083 ("" (grind) nil nil)
+   ((nnint_plus_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (nnint_plus_posint_is_posint application-judgement "posint"
+     integers nil)
+    (nnint_times_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (even_plus_even_is_even application-judgement "even_int" integers
+     nil)
+    (odd_plus_odd_is_even application-judgement "even_int" integers
+     nil)
+    (even_plus_odd_is_odd application-judgement "odd_int" integers nil)
+    (mult_divides2 application-judgement "(divides(m))" divides nil)
+    (mult_divides1 application-judgement "(divides(n))" divides nil)
+    (even_times_int_is_even application-judgement "even_int" integers
+     nil)
+    (posint_times_posint_is_posint application-judgement "posint"
+     integers nil)
+    (odd_plus_even_is_odd application-judgement "odd_int" integers nil)
+    (posint_plus_nnint_is_posint application-judgement "posint"
+     integers nil)
+    (/= const-decl "boolean" notequal nil)
+    (XOR const-decl "bool" xor_def nil)
+    (FA const-decl "[bool, bool]" adder nil)
+    (bool2nat const-decl "nat" adder nil))
+   shostak)
+  (FA_corr1-1 nil 3555152953
+   ("" (skosimp)
+    (("" (expand "bool2nat")
+      (("" (expand "FA") (("" (grind) nil nil)) nil)) nil))
+    nil)
+   ((nnint_plus_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (nnint_plus_posint_is_posint application-judgement "posint"
+     integers nil)
+    (nnint_times_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (even_plus_even_is_even application-judgement "even_int" integers
+     nil)
+    (odd_plus_odd_is_even application-judgement "even_int" integers
+     nil)
+    (even_plus_odd_is_odd application-judgement "odd_int" integers nil)
+    (mult_divides2 application-judgement "(divides(m))" divides nil)
+    (mult_divides1 application-judgement "(divides(n))" divides nil)
+    (even_times_int_is_even application-judgement "even_int" integers
+     nil)
+    (posint_times_posint_is_posint application-judgement "posint"
+     integers nil)
+    (odd_plus_even_is_odd application-judgement "odd_int" integers nil)
+    (posint_plus_nnint_is_posint application-judgement "posint"
+     integers nil)
+    (/= const-decl "boolean" notequal nil)
+    (XOR const-decl "bool" xor_def nil)
+    (FA const-decl "[bool, bool]" adder nil)
+    (bool2nat const-decl "nat" adder nil))
+   shostak))
+ (FA_corr 0
+  (yes "simple!" 3630072423 ("" (grind) nil nil)
+   ((nnint_plus_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (nnint_plus_posint_is_posint application-judgement "posint"
+     integers nil)
+    (nnint_times_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (even_plus_even_is_even application-judgement "even_int" integers
+     nil)
+    (odd_plus_odd_is_even application-judgement "even_int" integers
+     nil)
+    (even_plus_odd_is_odd application-judgement "odd_int" integers nil)
+    (mult_divides2 application-judgement "(divides(m))" divides nil)
+    (mult_divides1 application-judgement "(divides(n))" divides nil)
+    (even_times_int_is_even application-judgement "even_int" integers
+     nil)
+    (posint_times_posint_is_posint application-judgement "posint"
+     integers nil)
+    (odd_plus_even_is_odd application-judgement "odd_int" integers nil)
+    (posint_plus_nnint_is_posint application-judgement "posint"
+     integers nil)
+    (/= const-decl "boolean" notequal nil)
+    (XOR const-decl "bool" xor_def nil)
+    (FA const-decl "[bool, bool]" adder nil)
+    (bool2nat const-decl "nat" adder nil))
+   shostak)
+  (FA_corr-2 "une autre + courte" 3567431489
+   ("" (skosimp) (("" (beta) (("" (grind) nil nil)) nil)) nil)
+   ((nnint_plus_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (nnint_plus_posint_is_posint application-judgement "posint"
+     integers nil)
+    (nnint_times_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (even_plus_even_is_even application-judgement "even_int" integers
+     nil)
+    (odd_plus_odd_is_even application-judgement "even_int" integers
+     nil)
+    (even_plus_odd_is_odd application-judgement "odd_int" integers nil)
+    (mult_divides2 application-judgement "(divides(m))" divides nil)
+    (mult_divides1 application-judgement "(divides(n))" divides nil)
+    (even_times_int_is_even application-judgement "even_int" integers
+     nil)
+    (posint_times_posint_is_posint application-judgement "posint"
+     integers nil)
+    (odd_plus_even_is_odd application-judgement "odd_int" integers nil)
+    (posint_plus_nnint_is_posint application-judgement "posint"
+     integers nil)
+    (/= const-decl "boolean" notequal nil)
+    (XOR const-decl "bool" xor_def nil)
+    (FA const-decl "[bool, bool]" adder nil)
+    (bool2nat const-decl "nat" adder nil))
+   shostak)
+  (FA_corr-1 nil 3555147395
+   ("" (skosimp)
+    (("" (beta)
+      (("" (expand "bool2nat")
+        (("" (expand "FA")
+          (("" (lift-if)
+            (("" (prop) (("1" (grind) nil nil) ("2" (grind) nil nil))
+              nil))
+            nil))
+          nil))
+        nil))
+      nil))
+    nil)
+   ((nnint_plus_posint_is_posint application-judgement "posint"
+     integers nil)
+    (even_plus_even_is_even application-judgement "even_int" integers
+     nil)
+    (odd_plus_odd_is_even application-judgement "even_int" integers
+     nil)
+    (even_plus_odd_is_odd application-judgement "odd_int" integers nil)
+    (posint_times_posint_is_posint application-judgement "posint"
+     integers nil)
+    (odd_plus_even_is_odd application-judgement "odd_int" integers nil)
+    (posint_plus_nnint_is_posint application-judgement "posint"
+     integers nil)
+    (bool2nat const-decl "nat" adder nil)
+    (FA const-decl "[bool, bool]" adder nil)
+    (XOR const-decl "bool" xor_def nil)
+    (/= const-decl "boolean" notequal nil)
+    (nnint_plus_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (nnint_times_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (even_times_int_is_even application-judgement "even_int" integers
+     nil)
+    (mult_divides1 application-judgement "(divides(n))" divides nil)
+    (mult_divides2 application-judgement "(divides(m))" divides nil))
+   shostak)))
+

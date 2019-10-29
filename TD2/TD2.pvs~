@@ -1,0 +1,8 @@
+Index[T:TYPE] : DATATYPE
+	BEGIN
+
+	make() : empty?
+
+	add(index : Index, mot : string, page : nat) : add?
+
+END List

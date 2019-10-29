@@ -1,0 +1,60 @@
+%------------------------------------
+% Les listes triées : versions axiomes
+% 28/10/2015
+% new version +courte
+%------------------------------------
+SortedList : THEORY
+ BEGIN	
+        %%% TEST FOR nat ONLY
+        IMPORTING List[nat]
+	 l: VAR List[nat]
+ 	i,j,k : VAR nat
+
+	% predicat "est trie"
+	sorted? : [List[nat] -> boolean]
+sorted?_nil : AXIOM sorted?(nil)
+sorted?_cons_nil : AXIOM sorted?(cons(i, nil))
+sorted?_cons_cons : AXIOM sorted?(cons(i, cons(j, l))) = ((i <= j) AND sorted?(cons(j, l)))
+		  %% attention une version avec deux axiomes n'est pas bonne
+		  %% car elle demande (i <= head(l)) mais les tcc
+		  %% détectent le problème head ne s'applique pas sur nil
+
+	% insertion : ne supprime pas les égaux mais insère en triant
+	insert : [nat, List[nat] -> List[nat]]
+insert_nil :  AXIOM insert(i, nil) = cons(i, nil)
+insert_cons_inf : AXIOM (i <= j) IMPLIES insert(i, cons(j, l)) = cons(i, cons(j, l))
+insert_cons_sup : AXIOM (i > j) IMPLIES insert(i, cons(j, l)) = cons(j, insert(i, l))
+
+	% operation de tri simple
+	sort : [List[nat] -> List[nat]]
+sort_nil : AXIOM sort(nil) = nil
+sort_cons : AXIOM sort(cons(i, l)) = insert(i, sort(l))
+
+%----------------------------------------
+
+%-------------------------
+lemme_utile : THEOREM sorted?(l) IMPLIES sorted?(insert(i, l))
+
+%-----------------
+theoreme : THEOREM forall l: sorted?(sort(l))
+     %---------------------------------------
+     % I) show this one first
+     % (auto-rewrite-theory-with-importings "SortedList" :always? true)
+     % (induct-and-simplify "l")
+     % OK => theoreme-1
+     %---------------------------------------
+
+     %---------------------------------------
+      % II) the second version to see (and add the theorem)
+      %% (induct "l") (rewrite "sort_nil") (rewrite "sorted?_nil") ok
+      %% (skosimp)
+      %% (rewrite "sort_cons")
+      %% (lemma "lemme_utile") (inst? -1) (assert)
+      %% OKKKKKKKK
+      %---------------------------------------
+
+%%% ATTENTION la réecriture sans précaution ou le grind peuvent ne pas terminer
+%%%% et donc des fois on doit etre plus manuel et laborieux
+%%%% voir par exemple SortedList.old1
+
+ END SortedList

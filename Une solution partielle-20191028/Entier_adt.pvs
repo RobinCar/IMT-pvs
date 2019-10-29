@@ -1,0 +1,134 @@
+%%% ADT file generated from EntierADT
+
+Entier_adt: THEORY
+ BEGIN
+
+  Entier: TYPE
+
+  zero?, notzero?: [Entier -> boolean]
+
+  pred: [(notzero?) -> Entier]
+
+  zero: (zero?)
+
+  plus1: [Entier -> (notzero?)]
+
+  Entier_ord: [Entier -> upto(1)]
+
+  Entier_ord_defaxiom: AXIOM
+    Entier_ord(zero) = 0 AND
+     (FORALL (pred: Entier): Entier_ord(plus1(pred)) = 1);
+
+  ord(x: Entier): [Entier -> upto(1)] =
+      CASES x OF zero: 0, plus1(plus11_var): 1 ENDCASES
+
+  Entier_zero_extensionality: AXIOM
+    FORALL (zero?_var: (zero?), zero?_var2: (zero?)):
+      zero?_var = zero?_var2;
+
+  Entier_plus1_extensionality: AXIOM
+    FORALL (notzero?_var: (notzero?), notzero?_var2: (notzero?)):
+      pred(notzero?_var) = pred(notzero?_var2) IMPLIES
+       notzero?_var = notzero?_var2;
+
+  Entier_plus1_eta: AXIOM
+    FORALL (notzero?_var: (notzero?)):
+      plus1(pred(notzero?_var)) = notzero?_var;
+
+  Entier_pred_plus1: AXIOM
+    FORALL (plus11_var: Entier): pred(plus1(plus11_var)) = plus11_var;
+
+  Entier_inclusive: AXIOM
+    FORALL (Entier_var: Entier): zero?(Entier_var) OR notzero?(Entier_var);
+
+  Entier_induction: AXIOM
+    FORALL (p: [Entier -> boolean]):
+      (p(zero) AND
+        (FORALL (plus11_var: Entier):
+           p(plus11_var) IMPLIES p(plus1(plus11_var))))
+       IMPLIES (FORALL (Entier_var: Entier): p(Entier_var));
+
+  subterm(x: Entier, y: Entier):  boolean =
+      x = y OR
+       CASES y OF zero: FALSE, plus1(plus11_var): subterm(x, plus11_var)
+         ENDCASES;
+
+  <<:  (strict_well_founded?[Entier]) =
+      LAMBDA (x, y: Entier):
+        CASES y
+          OF zero: FALSE,
+             plus1(plus11_var): x = plus11_var OR x << plus11_var
+          ENDCASES;
+
+  Entier_well_founded: AXIOM strict_well_founded?[Entier](<<);
+
+  reduce_nat(zero?_fun: nat, notzero?_fun: [nat -> nat]):
+        [Entier -> nat] =
+      LAMBDA (Entier_adtvar: Entier):
+        LET red: [Entier -> nat] = reduce_nat(zero?_fun, notzero?_fun) IN
+          CASES Entier_adtvar
+            OF zero: zero?_fun,
+               plus1(plus11_var): notzero?_fun(red(plus11_var))
+            ENDCASES;
+
+  REDUCE_nat(zero?_fun: [Entier -> nat],
+             notzero?_fun: [[nat, Entier] -> nat]):
+        [Entier -> nat] =
+      LAMBDA (Entier_adtvar: Entier):
+        LET red: [Entier -> nat] = REDUCE_nat(zero?_fun, notzero?_fun) IN
+          CASES Entier_adtvar
+            OF zero: zero?_fun(Entier_adtvar),
+               plus1(plus11_var):
+                 notzero?_fun(red(plus11_var), Entier_adtvar)
+            ENDCASES;
+
+  reduce_ordinal(zero?_fun: ordinal, notzero?_fun: [ordinal -> ordinal]):
+        [Entier -> ordinal] =
+      LAMBDA (Entier_adtvar: Entier):
+        LET red: [Entier -> ordinal] =
+              reduce_ordinal(zero?_fun, notzero?_fun)
+          IN
+          CASES Entier_adtvar
+            OF zero: zero?_fun,
+               plus1(plus11_var): notzero?_fun(red(plus11_var))
+            ENDCASES;
+
+  REDUCE_ordinal(zero?_fun: [Entier -> ordinal],
+                 notzero?_fun: [[ordinal, Entier] -> ordinal]):
+        [Entier -> ordinal] =
+      LAMBDA (Entier_adtvar: Entier):
+        LET red: [Entier -> ordinal] =
+              REDUCE_ordinal(zero?_fun, notzero?_fun)
+          IN
+          CASES Entier_adtvar
+            OF zero: zero?_fun(Entier_adtvar),
+               plus1(plus11_var):
+                 notzero?_fun(red(plus11_var), Entier_adtvar)
+            ENDCASES;
+ END Entier_adt
+
+Entier_adt_reduce[range: TYPE]: THEORY
+ BEGIN
+
+  IMPORTING Entier_adt
+
+  reduce(zero?_fun: range, notzero?_fun: [range -> range]):
+        [Entier -> range] =
+      LAMBDA (Entier_adtvar: Entier):
+        LET red: [Entier -> range] = reduce(zero?_fun, notzero?_fun) IN
+          CASES Entier_adtvar
+            OF zero: zero?_fun,
+               plus1(plus11_var): notzero?_fun(red(plus11_var))
+            ENDCASES;
+
+  REDUCE(zero?_fun: [Entier -> range],
+         notzero?_fun: [[range, Entier] -> range]):
+        [Entier -> range] =
+      LAMBDA (Entier_adtvar: Entier):
+        LET red: [Entier -> range] = REDUCE(zero?_fun, notzero?_fun) IN
+          CASES Entier_adtvar
+            OF zero: zero?_fun(Entier_adtvar),
+               plus1(plus11_var):
+                 notzero?_fun(red(plus11_var), Entier_adtvar)
+            ENDCASES;
+ END Entier_adt_reduce

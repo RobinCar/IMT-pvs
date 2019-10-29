@@ -1,0 +1,22 @@
+ListTheory [T:TYPE+]: THEORY
+BEGIN
+	IMPORTING List[T] %%% on importe le data type
+	l, l1 : VAR List
+	x, y : VAR T
+
+	length : [List -> nat]
+	length_nil : AXIOM length(nil) = 0
+	length_cons : AXIOM length(cons(x,l)) = 1 + length(l)
+
+	append : [List, List -> List]
+    	append_nil : AXIOM  append(nil, l) = l
+    	append_cons : AXIOM append(cons(x,l), l1) = cons(x, append(l, l1))
+
+	putlast : [List, T -> List]
+	putlast_nil : AXIOM 
+	
+
+END ListTheory
+
+
+	

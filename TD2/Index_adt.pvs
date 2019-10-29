@@ -1,0 +1,154 @@
+%%% ADT file generated from TD2
+
+Index_adt: THEORY
+ BEGIN
+
+  Index: TYPE
+
+  empty?, add?: [Index -> boolean]
+
+  index: [(add?) -> Index]
+
+  mot: [(add?) -> string]
+
+  page: [(add?) -> nat]
+
+  make: (empty?)
+
+  add: [[Index, string, nat] -> (add?)]
+
+  Index_ord: [Index -> upto(1)]
+
+  Index_ord_defaxiom: AXIOM
+    Index_ord(make) = 0 AND
+     (FORALL (index: Index, mot: string, page: nat):
+        Index_ord(add(index, mot, page)) = 1);
+
+  ord(x: Index): [Index -> upto(1)] =
+      CASES x OF make: 0, add(add1_var, add2_var, add3_var): 1 ENDCASES
+
+  Index_make_extensionality: AXIOM
+    FORALL (empty?_var: (empty?), empty?_var2: (empty?)):
+      empty?_var = empty?_var2;
+
+  Index_add_extensionality: AXIOM
+    FORALL (add?_var: (add?), add?_var2: (add?)):
+      index(add?_var) = index(add?_var2) AND
+       mot(add?_var) = mot(add?_var2) AND page(add?_var) = page(add?_var2)
+       IMPLIES add?_var = add?_var2;
+
+  Index_add_eta: AXIOM
+    FORALL (add?_var: (add?)):
+      add(index(add?_var), mot(add?_var), page(add?_var)) = add?_var;
+
+  Index_index_add: AXIOM
+    FORALL (add1_var: Index, add2_var: string, add3_var: nat):
+      index(add(add1_var, add2_var, add3_var)) = add1_var;
+
+  Index_mot_add: AXIOM
+    FORALL (add1_var: Index, add2_var: string, add3_var: nat):
+      mot(add(add1_var, add2_var, add3_var)) = add2_var;
+
+  Index_page_add: AXIOM
+    FORALL (add1_var: Index, add2_var: string, add3_var: nat):
+      page(add(add1_var, add2_var, add3_var)) = add3_var;
+
+  Index_inclusive: AXIOM
+    FORALL (Index_var: Index): empty?(Index_var) OR add?(Index_var);
+
+  Index_induction: AXIOM
+    FORALL (p: [Index -> boolean]):
+      (p(make) AND
+        (FORALL (add1_var: Index, add2_var: string, add3_var: nat):
+           p(add1_var) IMPLIES p(add(add1_var, add2_var, add3_var))))
+       IMPLIES (FORALL (Index_var: Index): p(Index_var));
+
+  subterm(x: Index, y: Index):  boolean =
+      x = y OR
+       CASES y
+         OF make: FALSE,
+            add(add1_var, add2_var, add3_var): subterm(x, add1_var)
+         ENDCASES;
+
+  <<:  (strict_well_founded?[Index]) =
+      LAMBDA (x, y: Index):
+        CASES y
+          OF make: FALSE,
+             add(add1_var, add2_var, add3_var):
+               x = add1_var OR x << add1_var
+          ENDCASES;
+
+  Index_well_founded: AXIOM strict_well_founded?[Index](<<);
+
+  reduce_nat(empty?_fun: nat, add?_fun: [[nat, string, nat] -> nat]):
+        [Index -> nat] =
+      LAMBDA (Index_adtvar: Index):
+        LET red: [Index -> nat] = reduce_nat(empty?_fun, add?_fun) IN
+          CASES Index_adtvar
+            OF make: empty?_fun,
+               add(add1_var, add2_var, add3_var):
+                 add?_fun(red(add1_var), add2_var, add3_var)
+            ENDCASES;
+
+  REDUCE_nat(empty?_fun: [Index -> nat],
+             add?_fun: [[nat, string, nat, Index] -> nat]):
+        [Index -> nat] =
+      LAMBDA (Index_adtvar: Index):
+        LET red: [Index -> nat] = REDUCE_nat(empty?_fun, add?_fun) IN
+          CASES Index_adtvar
+            OF make: empty?_fun(Index_adtvar),
+               add(add1_var, add2_var, add3_var):
+                 add?_fun(red(add1_var), add2_var, add3_var, Index_adtvar)
+            ENDCASES;
+
+  reduce_ordinal(empty?_fun: ordinal,
+                 add?_fun: [[ordinal, string, nat] -> ordinal]):
+        [Index -> ordinal] =
+      LAMBDA (Index_adtvar: Index):
+        LET red: [Index -> ordinal] = reduce_ordinal(empty?_fun, add?_fun)
+          IN
+          CASES Index_adtvar
+            OF make: empty?_fun,
+               add(add1_var, add2_var, add3_var):
+                 add?_fun(red(add1_var), add2_var, add3_var)
+            ENDCASES;
+
+  REDUCE_ordinal(empty?_fun: [Index -> ordinal],
+                 add?_fun: [[ordinal, string, nat, Index] -> ordinal]):
+        [Index -> ordinal] =
+      LAMBDA (Index_adtvar: Index):
+        LET red: [Index -> ordinal] = REDUCE_ordinal(empty?_fun, add?_fun)
+          IN
+          CASES Index_adtvar
+            OF make: empty?_fun(Index_adtvar),
+               add(add1_var, add2_var, add3_var):
+                 add?_fun(red(add1_var), add2_var, add3_var, Index_adtvar)
+            ENDCASES;
+ END Index_adt
+
+Index_adt_reduce[range: TYPE]: THEORY
+ BEGIN
+
+  IMPORTING Index_adt
+
+  reduce(empty?_fun: range, add?_fun: [[range, string, nat] -> range]):
+        [Index -> range] =
+      LAMBDA (Index_adtvar: Index):
+        LET red: [Index -> range] = reduce(empty?_fun, add?_fun) IN
+          CASES Index_adtvar
+            OF make: empty?_fun,
+               add(add1_var, add2_var, add3_var):
+                 add?_fun(red(add1_var), add2_var, add3_var)
+            ENDCASES;
+
+  REDUCE(empty?_fun: [Index -> range],
+         add?_fun: [[range, string, nat, Index] -> range]):
+        [Index -> range] =
+      LAMBDA (Index_adtvar: Index):
+        LET red: [Index -> range] = REDUCE(empty?_fun, add?_fun) IN
+          CASES Index_adtvar
+            OF make: empty?_fun(Index_adtvar),
+               add(add1_var, add2_var, add3_var):
+                 add?_fun(red(add1_var), add2_var, add3_var, Index_adtvar)
+            ENDCASES;
+ END Index_adt_reduce

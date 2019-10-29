@@ -1,0 +1,151 @@
+%----------------------
+% exemple simple des entiers naturels positifs
+% TP1/EntierTheory.pvs
+% 11/10/2018
+%------------------------
+EntierTheory : THEORY
+ BEGIN
+        IMPORTING Entier
+
+	i,j,k : VAR Entier
+
+
+%%% OBSERVATEURS: 
+equal? : [Entier, Entier -> boolean]
+
+%%%% INTERNES: 
+plus: [Entier, Entier -> Entier]
+moins: [Entier, Entier -> Entier]
+
+%%%% equal?
+equal?_zero_zero : AXIOM equal?(zero, zero)
+equal?_zero_plus1 : AXIOM NOT equal?(zero, plus1(i))
+equal?_plus1_zero : AXIOM NOT equal?(plus1(i), zero)
+equal?_plus1_plus1 : AXIOM equal?(plus1(i), plus1(j)) = equal?(i, j)
+
+% %%%% 1 test simple
+simple1 : THEOREM zero?(plus1(plus1(i))) = false
+% %%%  (auto-rewrite-theory-with-importings "EntierTheory" :always? true) 
+% %%%% (skosimp)
+% %%%% (do-rewrite)
+
+simple2 : THEOREM equal?(plus1(plus1(plus1(i))), plus1(plus1(plus1(i)))) = equal?(i, i)
+% %%%%% idem
+
+%%% MAIS attention aux do-rewrite, grind, ground cela peuvent boucler !!!!
+
+%%%% ----------------------
+%%%% pair and impair mutually recursive
+pair? : [Entier -> boolean]
+impair? : [Entier -> boolean]
+pair?_zero : AXIOM pair?(zero) 
+pair?_plus1 : AXIOM pair?(plus1(i)) = impair?(i)
+impair?_zero : AXIOM NOT(impair?(zero) )
+impair?_plus1 : AXIOM impair?(plus1(i)) = pair?(i)
+%%% Q1: trouver une autre alternative et prouver leur equivallence
+
+%%% one theorem 
+pair_impair : THEOREM pair?(i) = NOT(impair?(i))
+%%% if no data type cannot do induction
+%%% (auto-rewrite-theory-with-importings "EntierTheory" :always? true) 
+%%% (induct "i")
+%%% (do-rewrite) (ground)
+%%% (skosimp)
+%%% (do-rewrite) (bddsimp) // (replace -1) (ground)
+%%% OK
+
+%%%  ----------------------
+%%% alternative plus simple
+pair2? : [Entier -> boolean]
+pair2?_zero : AXIOM pair2?(zero) 
+pair2?_plus1_zero : AXIOM NOT pair2?(plus1(zero)) 
+pair2?_plus1_plus1 : AXIOM pair2?(plus1(plus1(i))) = pair2?(i)
+
+%%%% ----------------------
+%%% min
+min : [Entier, Entier -> Entier]
+%%%max : [Entier, Entier -> Entier]
+min_zero_var: AXIOM min(zero, i) = zero
+min_plus1_zero: AXIOM min(plus1(i), zero) = zero
+min_plus1_plus1: AXIOM min(plus1(i), plus1(j)) = plus1(min(i, j))
+
+min_prop : THEOREM min(plus1(i), i) = i
+%%% (auto-rewrite-theory-with-importings "EntierTheory" :always? true) 
+%%% (induct "i")
+%%% (do-rewrite)
+%%% (skosimp)
+%%%% RISK of loop !!!
+%%% (lemma "min_plus1_plus1")
+%%% (inst?)
+%%% (replace -1)
+%%% (replace -2)
+%%%% OK
+
+%%%% ----------------------
+%%% definir inf large
+inf : [Entier, Entier -> boolean]
+%%%inf_zero_zero: AXIOM min(zero, zero) = false
+%%%inf_plus1_zero: AXIOM min(plus1(i), zero) = false
+inf_zero_var: AXIOM inf(zero, i) = true
+inf_plus1_zero: AXIOM inf(plus1(i), zero) = false
+inf_plus1_plus1: AXIOM inf(plus1(i), plus1(j)) = inf(i, j)
+
+inf_inf : THEOREM inf(plus1(i), j) => inf(i, j)
+%%% (auto-rewrite-theory-with-importings "EntierTheory" :always? true) 
+%%% (induct "i")
+%%% (skosimp) (ground) OK.1
+%%% (skosimp)
+%%% (induct "j")
+%%% (inst? -1) (ground) OK.2.1
+%%% (skosimp) (inst?)
+%%% (ground) OK
+
+%%% une autre 
+%%% inf_inf2 : THEOREM inf(i, j) => inf(i, plus1(j))
+
+inf_2 : THEOREM inf(i, i) 
+%%% (auto-rewrite-theory-with-importings "EntierTheory" :always? true) 
+%%% (induct "i")
+%%% (rewrite "inf_zero_var") OK
+%%% (skosimp)
+%%% (rewrite "inf_plus1_plus1") !!!!
+%%% (lemma "inf_plus1_plus1") (inst?)
+%%% (replace -1)
+%%% OK
+
+%%%% ----------------------
+%%% min with inf
+min2 : [Entier, Entier -> Entier]
+min2_var_yes: AXIOM inf(i, j) => min2(i, j) = i
+min2_var_no: AXIOM NOT(inf(i, j)) => min2(i, j) = j
+
+%%%% ----------------------
+max : [Entier, Entier -> Entier]
+max_zero_var: AXIOM max(zero, i) = i
+max_var_zero: AXIOM max(i, zero) = i
+max_zero: AXIOM max(plus1(i), plus1(j)) = plus1(max(i, j))
+
+%%%% ----------------------
+plus_var_zero : AXIOM plus(i, zero) = i
+plus_var_plus1 : AXIOM plus(i, plus1(j)) = plus1(plus(i, j))
+
+%%% plus simple first 
+plus_zero : THEOREM plus(i, zero) = plus(zero, i)
+%%% induction + rewrite manuel + replace subtile OK
+ % (auto-rewrite-theory-with-importings "EntierTheory" :always? true)
+ % (induct "i")
+ % (skosimp)
+ % (rewrite "plus_var_plus1")
+ % (rewrite "plus_var_zero")
+ % (rewrite "plus_var_zero")
+ % (replace -1 (1) RL)
+%%  OK
+
+%%%% ----------------------
+
+moins_zero_var : AXIOM moins(zero, i) = zero
+moins_var_zero : AXIOM moins(i, zero) = i
+moins_plus1_plus1 : AXIOM moins(plus1(i), plus1(j)) = moins(i, j)
+
+
+END EntierTheory

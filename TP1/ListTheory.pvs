@@ -1,0 +1,45 @@
+ListTheory [T:TYPE+]: THEORY
+BEGIN
+	IMPORTING List[T] %%% on importe le data type
+	l, l1 : VAR List
+	x, y : VAR T
+
+	length : [List -> nat]
+	length_nil : AXIOM length(nil) = 0
+	length_cons : AXIOM length(cons(x,l)) = 1 + length(l)
+
+	append : [List, List -> List]
+    	append_nil1 : AXIOM  append(nil, l) = l
+	append_nil2 : AXIOM  append(l, nil) = l
+    	append_cons : AXIOM append(cons(x,l), l1) = cons(x, append(l, l1))
+
+	putlast : [T, List -> List]
+	putlast_nil : AXIOM putlast(x, nil) = cons(x, nil)
+	putlast_cons : AXIOM putlast(x, cons(y,l)) = cons(y, putlast(x, l))
+
+	reverse : [List -> List]
+	reverse_nil : AXIOM reverse(nil) = nil
+	reverse_cons : AXIOM reverse(cons(x,l)) = putlast(x, reverse(l))
+
+	%%% Théorèmes
+	%%% ctrl x pr
+	%%% (auto-rewrite-theory-with-importings "ListTheory" :always? true  :importchain? true)
+	%%% (induct "l")
+	%%% (skosimp)
+	%%% (do-rewrite)
+	%%% (rewrite "length_cons)
+	%%% (inst -1 "x!1")
+	%%% (grind)
+
+	th1 : THEOREM length(putlast(x, l)) = length(l) + 1
+
+	th2 : THEOREM length(reverse(l)) = length(l)
+
+	th3 : THEOREM length(append(l, l1)) = length(l) + length(l1)
+
+	%th4 : THEOREM 
+
+END ListTheory
+
+
+	

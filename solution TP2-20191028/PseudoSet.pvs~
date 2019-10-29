@@ -1,0 +1,68 @@
+PseudoSet [T:TYPE+]: THEORY
+ BEGIN
+
+  IMPORTING List[T]
+  l, l1 : VAR List
+  x, y : VAR T
+
+  size : [List[T] -> nat]
+  size_nil : AXIOM size(nil) = 0
+  size_cons : AXIOM size(cons(x,l)) = 1 + size(l)
+
+  isIn : [T, List[T] -> bool]
+  isIn_nil : AXIOM isIn(x, nil) = false
+  isIn_cons_yes : AXIOM x=y IMPLIES isIn(x, cons(y,l)) = true
+  isIn_cons_no : AXIOM x/=y IMPLIES isIn(x, cons(y,l)) = isIn(x,l)
+
+  count : [List[T] -> nat]
+  conut_nil : AXIOM count(nil) = 0
+  count_cons_yes : AXIOM isIn(x,l) IMPLIES count(cons(x,l)) = count(l)
+  count_cons_no : AXIOM not(isIn(x,l)) IMPLIES count(cons(x,l)) = 1 + count(l)
+
+  nodup1 : [List[T] -> bool]
+  nodup1 : AXIOM nodup1(l) = size(l) = count(l)
+
+  nodup : [List[T] -> bool]
+  nodup_nil : AXIOM nodup(nil) = true
+  nodup_cons : AXIOM nodup(cons(x,l)) = (not(isIn(x,l)) and nodup(l))
+
+  seting : [List[T] -> List[T]]
+  seting_nil : AXIOM seting(nil) = nil
+  seting_cons_yes : AXIOM isIn(x,l) IMPLIES seting(cons(x,l)) = seting(l)
+  seting_cons_no : AXIOM not(isIn(x,l)) IMPLIES seting(cons(x,l)) = cons(x,seting(l))
+
+  isIncluded : [List[T], List[T] -> bool]
+  isIncluded_nilToL : AXIOM isIncluded(l, nil) = false
+  isIncluded_lToNil : AXIOM isIncluded(nil, l) = true
+  isIncluded_cons : AXIOM isIncluded(cons(x,l), l1) = (isIn(x,l1) and isIncluded(l,l1))
+
+  isSame : [List[T], List[T] -> bool]
+  isSame : AXIOM isSame(l, l1) = (isIncluded(l,l1) and isIncluded(l1,l))
+
+ %%% Théorèmes
+%%% ctrl x pr
+%%% (auto-rewrite-theory-with-importings "PseudoSet" :always? true  :importchain? true)
+%%% (induct "l")
+%%% (skosimp)
+%%% (do-rewrite)
+%%% (rewrite "length_cons)
+%%% (inst -1 "x!1")
+%%% (grind)
+%%% (case "isIn(cons1_var!1, cons2_var!1)")
+
+
+  th1 : THEOREM size(l) >= count(l)
+
+  th2 : THEOREM isIn(x, seting(cons(x,l))) = true
+
+  th3 : THEOREM isIn(x, seting(l)) IMPLIES isIn(x,l)
+
+  th4 : LEMMA isIn(x,l) IMPLIES isIn(x, cons(y,l))
+
+  th5 : LEMMA isIncluded(l, l1) IMPLIES isIncluded(l, cons(x,l1))
+
+  th6 : THEOREM isIncluded(l, seting(l)) = true
+
+  th7 : THEOREM nodup(l) IMPLIES count(l) = count(seting(l)) and isSame(l, seting(l))
+
+ END PseudoSet

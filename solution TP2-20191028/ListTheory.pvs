@@ -1,0 +1,144 @@
+%-------------------------
+% List version theory generique basée sur un data type
+%%% et quelques preuves ...
+%%% 18/10/2018
+%-------------------------
+ListTheory [T:TYPE+]: THEORY
+ BEGIN
+
+	IMPORTING List[T] %%% on importe le data type 
+	l, l1 : VAR List
+ 	x,y : VAR T
+
+%%% definition de length
+    	       length : [List[T] -> nat]
+    length_nil : AXIOM  length(nil) = 0
+    length_cons : AXIOM length(cons(x,l)) = 1+ length(l)
+
+%%% definir append
+    	    append : [List[T], List[T] -> List[T]]
+    append_nil : AXIOM  append(nil, l) = l
+    append_cons : AXIOM append(cons(x,l), l1) = cons(x, append(l, l1))
+
+%%% definir putlast   
+	putlast : [List[T], T -> List[T]]
+  putlast_nil : AXIOM putlast(nil, x) = cons(x, nil)
+  putlast_cons : AXIOM putlast(cons(y, l), x) = cons(y, putlast(l, x))
+
+%%% definir reverse
+	reverse : [List[T] -> List[T]]
+  reverse_nil : AXIOM reverse(nil) = nil
+  reverse_cons : AXIOM reverse(cons(x, l)) = putlast(reverse(l), x)
+
+%====================== ESSAI DE REECRITURE
+
+simple2: THEOREM length(cons(x, cons(y, nil))) = 2
+%%% (skosimp)
+%%% 2x(rewrite "length_cons")
+%%% (rewrite "length_nil")
+%%% ground ou (rewrite "length_nil") (assert)
+%%% OK
+
+% exemple preuve simple par reecriture
+   th1 : THEOREM reverse(cons(x, cons(y, nil))) = cons(y, cons(x , nil))
+ % besoin induction -> datatype voir eventuellement par cas 
+% (auto-rewrite-theory-with-importings "ListTheory" :always? true  :importchain? true) 
+%% (skosimp)  (do-rewrite)
+%%% OK
+
+% ================== QUELQUES PREUVES INDUCTIVES
+%%% with putlast
+th6 : THEOREM length(putlast(l, x)) = 1+length(l)
+% (auto-rewrite-theory-with-importings "ListTheory" :always? true  :importchain? true) 
+% (induct "l") (skosimp) (do-rewrite)
+% (skosimsp) (skosimp) 
+% (inst -1 "x!1") %ATTENTION
+% ((grind)
+% OKkkkkkkkkkkkkkk
+
+%%% variante laborieuse 
+% (auto-rewrite-theory-with-importings "ListTheory" :always? true  :importchain? true) 
+% (induct "l") (skosimp) (do-rewrite)
+% (skosimsp) (skosimp) 
+% (rewrite "putlast_cons")
+% (rewrite "length_cons")
+% (rewrite "length_cons")
+% (inst -1 "x!1") %ATTENTION
+% (ground)
+%%% OK
+
+%%%% ------------ just for fun
+%%% PROP POSSIBLE putlast(l, t) = append(l, cons(t, nil))
+%%% met la pagaille avec la reecriture...
+%% th2 : THEOREM FORALL (t:T, l:List): putlast(l, t) = append(l, cons(t, nil))
+% (auto-rewrite-theory-with-importings "ListTheory" :always? true  :importchain? true) 
+% (induct "l")
+% (skosimp) (do-rewrite) % OK base
+% 2x(skosimp) (inst?) %%% (do-rewrite +) patine ???
+% (lemma "putlast_cons") (inst -1 "cons2_var!1" "t!1" "cons1_var!1")
+% (lemma "append_cons") (inst -1 "cons2_var!1" "cons(t!1, nil)" "cons1_var!1")
+% (replace -2 (1))
+% (replace -1 (1))
+% (inst?) % there is only one ok
+% (replace -3 (1))
+% OKkkkkkkkkkkkkk
+
+%%% a simpler one length reverse 
+th4 : THEOREM length(reverse(l)) = length(l)
+% (auto-rewrite-theory-with-importings "ListTheory" :always? true  :importchain? true) 
+% (induct "l") (grind) 
+% (skosimp)
+% (grind)
+%%% OK
+
+%%% mais alternative manuelle apres le skosimp
+% (rewrite "reverse_cons" 1)
+% (rewrite "th6" +)
+% (grind)
+% OKkkkkkkkkkkkkkkkkk
+
+%%% another one with append
+th5 : THEOREM length(append(l, l1)) = length(l) + length(l1)
+% (auto-rewrite-theory-with-importings "ListTheory" :always? true  :importchain? true) 
+% (induct "l")
+% (do-rewrite)
+% (skosimp) % cas de base OK
+% 2X(skosimp)
+% (do-rewrite)
+% (grind)
+%%%% OK
+%%% alternative sans details ...
+% (induct "l") 
+% base laborieuse mais passe
+% 2x(skosimp)
+% (rewrite "append_cons" 1)
+% (inst?) (do-rewrite)
+% (grind)
+% OKkkkkkkk
+
+%% th aux for the next one
+thaux : THEOREM reverse(putlast(l, x)) = cons(x, reverse(l))
+% (auto-rewrite-theory-with-importings "ListTheory" :always? true  :importchain? true) 
+% (induct "l") (skosimp) (do-rewrite)
+% (skosimp) (skosimp)
+%%% ATTENTION ici do-rewrite / grind loops !!!!!
+% (rewrite "putlast_cons" 1)
+% (rewrite "reverse_cons" 1)
+% (inst?)
+% (replace -1 (1))
+% (rewrite "putlast_cons" 1)
+% (rewrite "reverse_cons" 1)
+% OKkkkkkk
+
+%%% PROP reverse(reverse(l)) = l
+th3 : THEOREM FORALL (l:List): reverse(reverse(l)) = l 
+% (auto-rewrite-theory-with-importings "ListTheory" :always? true  :importchain? true) 
+% (induct "l")
+% (do-rewrite)/(ground)/(grind) %ok base
+% (skosimp) %%% (do-rewrite)/(grind) ATTENTION patine !!!!
+% (rewrite "reverse_cons" +1) %%
+% (rewrite "thaux" 1)
+% (replace -1 (1))
+% OKkkkkkkkkkkkkkkkkkkkkkkk
+
+ END ListTheory

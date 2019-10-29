@@ -1,0 +1,14 @@
+%--------------------------
+% Data type myList
+% 18/10/2017
+%--------------------------
+List[T:TYPE] : DATATYPE
+	BEGIN
+	% liste vide et son "recognizer"
+	nil : empty? 
+	% ajout dans une liste : une tête et un reste plus son prédicat
+	cons(head : T, tail : List) : cons?
+END List
+%%% noter que cette écriture représente exactement les constructeurs
+%%% sélecteurs et les prédicats associés
+%%% mais l'ors du tcc une théorie complète avec induction sera généree

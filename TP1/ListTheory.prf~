@@ -1,0 +1,20 @@
+(ListTheory
+ (th1 0
+  (th1-1 nil 3780116617
+   (""
+    (auto-rewrite-theory-with-importings "ListTheory" :always? true
+     :importchain? true)
+    (("" (skosimp)
+      (("" (do-rewrite) (("" (grind) (("" (postpone) nil nil)) nil))
+        nil))
+      nil))
+    nil)
+   nil shostak))
+ (th3 0
+  (th3-1 nil 3780116234
+   (""
+    (auto-rewrite-theory-with-importings "ListTheory" :always? true
+     :importchain? true)
+    (("" (postpone) nil nil)) nil)
+   nil shostak)))
+

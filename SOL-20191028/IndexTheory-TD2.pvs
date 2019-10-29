@@ -1,0 +1,60 @@
+%-------------------------
+% IndexTheory TD2  pour TP4 noté
+% 24/10/2019
+%%% ATTENTION ici version sans datatype
+%%% juste pour voir un axiome d'induction
+%-------------------------
+IndexTheory: THEORY
+ BEGIN
+
+	n,m : VAR nat 
+	Index : TYPE+ %else need to prove it but make is a witness
+        w, w1 : VAR string
+        i, i1 : VAR Index
+	
+% empty index
+	make : Index
+% add word, page and assume no duplicate of pairs (word, page)
+       add : [Index, string, nat -> Index]
+
+% test empty
+       empty? : [Index -> bool]
+empty_make : AXIOM  empty?(make)
+empty_add : AXIOM  not empty?(add(i, w, n))
+
+% size :  pour connaître la taille de l'index, ie son nombre de couples (mot, page)
+       size : [Index -> nat]
+size_make : AXIOM  size(make) = 0
+size_add : AXIOM  size(add(i, w, n)) = 1+size(i)
+
+% isIn? : teste si un mot donné apparaît  dans l'index
+	isIn? : [Index, string -> bool]
+isIn?_make : AXIOM  not isIn?(make, w)
+isIn?_add : AXIOM  isIn?(add(i, w, n), w1) = ((w=w1) OR isIn?(i, w1))
+%%% alternative equivalente au dernier axiome
+%%% viens de ((A => B) AND (NOT A => C)) <=> (A AND B) OR (NOT A AND C) et factorisation de l'egalité
+%% isIn?_add_1 : AXIOM  (w=w1) IMPLIES isIn?(add(i, w, n), w1)
+%% isIn?_add_2 : AXIOM  (w/=w1) IMPLIES isIn?(add(i, w, n), w1) = isIn?(i, w1)
+%%% RQ
+%% The Boolean expressions include the constants TRUE and FALSE, the unary operator NOT, 
+%%% and the binary operators AND (also written &), OR, IMPLIES (=>), WHEN, and IFF (<=>).
+
+% onPage : à partir d'une page donne les mots de l'index qui sont sur cette page
+	onPage : [Index, nat -> list[string]]
+onPage_make : AXIOM  onPage(make, m) = null
+onPage_add_yes : AXIOM (n=m) IMPLIES onPage(add(i, w, n), m) = cons(w, onPage(i, m))
+onPage_add_no : AXIOM  (n/=m) IMPLIES onPage(add(i, w, n), m) = onPage(i, m)
+
+% pages : pour obtenir la liste des pages  où un mot donné apparaît
+	pages : [Index, string -> list[nat]]
+pages_make : AXIOM  pages(make, w1) = null
+pages_add_yes : AXIOM (w=w1) IMPLIES pages(add(i, w, n), w1) = cons(n, pages(i, w1))
+pages_add_no : AXIOM  (w/=w1) IMPLIES pages(add(i, w, n), w1) = pages(i, w1)
+
+%%% =========================
+
+%%% une propriété liant isIn? et pages 
+TH1: THEOREM  cons?(pages(i, w)) <=> isIn?(i, w)
+
+ END IndexTheory	
+

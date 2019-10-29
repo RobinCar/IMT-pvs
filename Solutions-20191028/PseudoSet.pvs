@@ -1,0 +1,124 @@
+%-------------------------
+% Version PseudoSet
+%%% et quelques preuves ...
+%%% 24/10/2019
+%-------------------------
+PseudoSet [T:TYPE+]: THEORY
+ BEGIN
+
+	IMPORTING List[T] %%% on importe le data type 
+	l, l1 : VAR List
+ 	x,y : VAR T
+
+%%% definition de size
+    	       size : [List[T] -> nat]
+    size_nil : AXIOM  size(nil) = 0
+    size_cons : AXIOM size(cons(x,l)) = 1+ size(l)
+
+%%% definir isIn?
+    	    isIn? : [T, List[T] -> bool]
+    isin_nil : AXIOM  NOT isIn?(x, nil) 
+%    isin_cons_yes : AXIOM (x = y) IMPLIES isIn?(x, cons(y,l)) 
+%    isin_cons_no : AXIOM (x /= y) IMPLIES isIn?(x, cons(y,l)) = isIn?(x, l)
+%%% alternative better do not generate a the tccs
+    isin_alt: AXIOM isIn?(x, cons(y,l)) = ((x=y) or isIn?(x, l))
+
+%%% definition de count : number of distinct elements
+    	       count : [List[T] -> nat]
+    count_nil : AXIOM  count(nil) = 0
+    count_cons_yes :  AXIOM isIn?(x, l) IMPLIES  count(cons(x,l)) = count(l)
+    count_cons_no : AXIOM NOT isIn?(x, l) IMPLIES count(cons(x,l)) = 1 + count(l)
+
+%%% check if no duplication 
+    	     no_dup : [List[T] -> bool]
+%%%    no_dup : AXIOM no_dup(l) = (count(l) = size(l))
+%%%  may be responsible for looping if both
+%%% ou version inductive 
+    no_dup_nil : AXIOM no_dup(nil)
+    no_dup_cons_yes : AXIOM (NOT isIn?(x, l) AND no_dup(l)) IMPLIES no_dup(cons(x, l))
+    no_dup_cons_no :  AXIOM (isIn?(x, l) OR NOT no_dup(l)) IMPLIES NOT no_dup(cons(x, l))
+
+%%% definir seting
+    	    seting : [List[T] -> List[T]]
+    seting_nil : AXIOM seting(nil) = nil
+    seting_cons_yes : AXIOM isIn?(x, l) IMPLIES seting(cons(x, l)) = seting(l)
+    seting_cons_no : AXIOM NOT isIn?(x, l) IMPLIES seting(cons(x, l)) = cons(x, seting(l))
+
+%%% definir inclusion (withour ordering and duplication like sets)
+           isIncluded? : [List[T], List[T] -> bool]
+    isincluded_nil : AXIOM isIncluded?(nil, l1) 
+    isincluded_cons : AXIOM isIncluded?(cons(x, l), l1) = (isIn?(x, l1) AND isIncluded?(l, l1))
+
+%%% definir equals
+           isSame? : [List[T], List[T] -> bool]
+    issame : AXIOM isIncluded?(l, l1) AND isIncluded?(l1, l)
+
+%%% union, intersection, etc ?
+
+% ================== QUELQUES PREUVES INDUCTIVES
+%%% !!! attention aux rewrite et grind peuvent loop
+
+TH1: THEOREM count(l) <= size(l)
+%%% (auto-rewrite-theory-with-importings "PseudoSet" :always? true)
+%%% (induct "l")
+%%%% (grind)
+%%%% (skosimp)
+%%% (case "isIn?(cons1_var!1, cons2_var!1)")
+%%% (grind) x2
+%%%% OK
+
+%%% avec alternative quite the same thing 
+
+LEM1: LEMMA isIn?(x, seting(l)) IMPLIES isIn?(x, l)
+%%% version with three axioms for isIn?
+%%% (auto-rewrite-theory-with-importings "PseudoSet" :always? true)
+%%% (induct "l")
+%%% (skosimp)
+%%% (grind) OK
+%%% (skosimp) X2
+%%% (case "x!1 = cons1_var!1")
+%%% (rewrite "isin_cons_yes" +) OK
+%%% (rewrite "isin_cons_no" +) 
+%%% (inst? -1)
+%%% (split) OK ...
+%%% (rewrite "seting_cons_no" -1)
+%%% (rewrite "isin_cons_no") 
+%%% OK
+
+%%% alternative DONE
+%%% (auto-rewrite-theory-with-importings "PseudoSet" :always? true)
+%%% (induct "l")
+%%% (skosimp)
+%%% (grind) OK
+%%% (skosimp) X2
+%%% (rewrite "isin_alt" +) 
+%%% (flatten)
+%%% (inst? -1)
+%%% (split) OK
+%%% (rewrite "seting_cons_no" -1)
+%%% (rewrite "isin_alt") 
+%%% (split) OK
+
+LEM2: LEMMA isIn?(x, l) IMPLIES isIn?(x, cons(y, l))
+%%%!!! (auto-rewrite-theory-with-importings "PseudoSet" :always? true) !!!NO
+%%% (induct "l")
+%%%% (skosimp) %%%!!! (grind) LOOP!!!!  (rewrite "isin_cons_no" +) LOOP
+%%% (case "x!1 = y!1") 
+%%% (rewrite "isin_cons_yes" +) OK
+%%% (rewrite "isin_nil") OK
+%%%% (skosimp) X2
+%%% (case "x!1 = y!1") (rewrite "isin_cons_yes" +) OK
+%%%  (rewrite "isin_cons_no" +)
+%%% OK
+
+%%%% alternative NOT DONE
+
+%%% RQ there is one tcc with the isIn? version with 3 axioms
+% Existence TCC generated (at line 40, column 9) for
+    % seting: [List[T] -> List[T]]
+  % unfinished
+%seting_TCC1: OBLIGATION EXISTS (x: [List[T] -> List[T]]): TRUE;
+%%% utiliser le prouveur dessus en instantiant x par exemple
+%%% (instantiate + ("(lambda (x:List[T]): nil)")) OK
+
+ END PseudoSet

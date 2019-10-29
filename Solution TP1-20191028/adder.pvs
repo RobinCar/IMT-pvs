@@ -1,0 +1,70 @@
+%%%% ----------
+%%%% 10/10/2017
+%%% l'exemple de l'additionneur complet
+%%% on pourrait faire plus simple en utilisant {0,1}
+%%% mais mieux de coller au hardware
+%%% ---------------
+adder: THEORY
+ BEGIN
+ % variables 
+ x,y,cin : VAR bool
+
+ % la fonction de conversion
+ bool2nat(x) : nat = IF x THEN 1 ELSE 0 ENDIF
+
+%% une version plus simple avec deux fonctions
+  FAcarry(x,y,cin) : bool = (x AND y) OR ((x XOR y) AND cin) % carry
+  FAsum(x,y,cin) : bool = x XOR y XOR cin % sum
+
+ % la fonction de l'additionneur [bool, bool, bool -> [bool, bool]]
+  FA(x,y,cin) : [bool, bool] = ((x AND y) OR ((x XOR y) AND cin), % carry
+                               (x XOR y) XOR cin) % sum
+
+%--------------------------theoremes
+%% version avec les deux fonctions
+ FA_corr2 : THEOREM 
+         bool2nat(FAsum(x, y, cin)) + 2 * bool2nat(FAcarry(x, y, cin))
+           = bool2nat(x) + bool2nat(y) + bool2nat(cin)
+
+  % version sans let
+ FA_corr1 : THEOREM 
+         bool2nat(FA(x, y, cin)`2) + 2 * bool2nat(FA(x, y, cin)`1)
+           = bool2nat(x) + bool2nat(y) + bool2nat(cin)
+
+%-------essai
+        %% skosimp
+        % (expand "bool2nat")
+         % (expand "FA")
+         % (grind)
+
+%%% en fait grind tout seul est suffisant ...
+
+%%% (skosimp) (case  "x!1" "y!1" "cin!1") possible mais bof
+
+ % la propriete à prouver avec LET
+ FA_corr : THEOREM
+    LET (carry, sum) = FA(x, y, cin) IN
+         bool2nat(sum) + 2 * bool2nat(carry)
+           = bool2nat(x) + bool2nat(y) + bool2nat(cin)
+
+%------- essai 
+         %% (skosimp) (beta) pour le let (on obtiends la 2eme forme)
+         % (expand "bool2nat")
+         % (expand "FA")
+         % (lift-if)
+         % (prop) => +2 observer la condition en antecedent puis en consequent
+         % (grind) sur chaque
+         % QED
+
+%%% idem avec (grind)
+
+ END adder
+
+%%% script au 7/1/2015
+%% adder.FA_corr: proved - complete [shostak](n/a s)
+
+%% ("" (skosimp) (beta) (grind))
+
+%% adder.FA_corr1: proved - complete [shostak](n/a s)
+
+%% ("" (skosimp) (expand "bool2nat") (expand "FA") (grind))
